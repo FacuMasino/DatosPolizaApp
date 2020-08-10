@@ -5,6 +5,8 @@ const path = require("path");
 const fetch = require("node-fetch");
 const { Console } = require("console");
 
+var port = process.env.PORT || 3000
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -264,7 +266,7 @@ app.post('/ver',async function(req, res) {
 		//.then(resp => {res.send.bind(res)(resp)})
 	});
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log("El servidor está inicializado en el puerto 3000");
    });
 
