@@ -264,7 +264,7 @@ app.post('/ver',async function(req, res) {
 		//.then(resp => {res.send.bind(res)(resp)})
 	});
 
-app.listen(3000, () => {
+app.listen(3000,'0.0.0.0', () => {
     console.log("El servidor está inicializado en el puerto 3000");
    });
 
