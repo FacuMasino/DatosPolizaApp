@@ -1,7 +1,7 @@
 {
   "name": "facuapp",
   "version": "1.0.0",
-  "description": "Obtener datos de pólizas",
+  "description": "Obtener datos de póliza",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
