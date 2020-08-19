@@ -5,6 +5,42 @@ const path = require("path");
 const fetch = require("node-fetch");
 const { Console } = require("console");
 
+//<Firebase>
+var admin = require('firebase-admin');
+var serviceAccount = require("./appverdatoskey.json");
+
+var authCKey = ""; //Clave de auth para Cookie .ASPXAUTH
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://appverdatos.firebaseio.com"
+});
+
+//Obtener clave
+var db = admin.database();
+var ref = db.ref("tkn");
+ref.once("value", function(data) {
+  authCKey = (data.val().tknid0.content);
+  console.log("Clave .ASPXAUTH Obtenida.")
+});
+
+//Guardar Clave
+
+var dbAuthCKey = ref.child('tknid0');
+    dbAuthCKey.set({testing: 'algo'}, function(error)
+    {
+        if(error)
+        {
+            console.log("Ocurrió un error al guardar la clave. > " + error.message);
+        } 
+        else
+        {
+            console.log("Clave guardada.");
+        }
+    });
+
+//</Firebase>
+
 var port = process.env.PORT || 3000
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,7 +77,7 @@ async function GetPcSummaryAuto(PcN)
 	const UrlPcSummaryAuto = 'https://portalpas.sancristobal.com.ar/PolicySearch/getPolicyByPolicyNumber?PolicyNumber=' + PcN;
 	const Params = {
 		headers: {
-			"Cookie": ".ASPXAUTH=0792020FF8E3B69AB7B5AFCB58D020E35191EC051530DD9311543EEB07BBB426BE5CC35C6AC43AC1A3D427F7162F937CD143C81DA66B5DD1338F54B2B755B1CD5227D2C2D7D6AB89AAB6456DA255101D06B8E7FFB8286822BB07CBDE949546DA10EDE1C9DEDE8539D5F336F5A8FB382065FFB4EAFA06432F39AC81B802F71E95B1937B4B018D4017AC7B066EE25721CA",
+			"Cookie": ".ASPXAUTH=" + authCKey,
 			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q",
 		},
 		method: "GET"
@@ -56,7 +92,7 @@ async function GetPcPaymentInfo(pcId,Discount = Boolean)
 	const UrlPcDiscount = 'https://portalpas.sancristobal.com.ar/CommercialAlternatives/getCommercialAlternatives?policyPeriodId=' + pcId;
 	const Params = {
 		headers: {
-			"Cookie": ".ASPXAUTH=0792020FF8E3B69AB7B5AFCB58D020E35191EC051530DD9311543EEB07BBB426BE5CC35C6AC43AC1A3D427F7162F937CD143C81DA66B5DD1338F54B2B755B1CD5227D2C2D7D6AB89AAB6456DA255101D06B8E7FFB8286822BB07CBDE949546DA10EDE1C9DEDE8539D5F336F5A8FB382065FFB4EAFA06432F39AC81B802F71E95B1937B4B018D4017AC7B066EE25721CA",
+			"Cookie": ".ASPXAUTH="+ authCKey,
 			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q",
 		},
 		method: "GET",
