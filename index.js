@@ -5,6 +5,11 @@ const path = require("path");
 const fetch = require("node-fetch");
 const { Console } = require("console");
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+});
+
 //<Firebase>
 var admin = require('firebase-admin');
 var serviceAccount = require("./appverdatoskey.json");
@@ -21,24 +26,21 @@ var db = admin.database();
 var ref = db.ref("tkn");
 ref.once("value", function(data) {
   authCKey = (data.val().tknid0.content);
-  console.log("Clave .ASPXAUTH Obtenida.")
+  console.log("Clave .ASPXAUTH Obtenida. > " + authCKey)
 });
 
 //Guardar Clave
-
-var dbAuthCKey = ref.child('tknid0');
-    dbAuthCKey.set({testing: 'algo'}, function(error)
-    {
-        if(error)
-        {
-            console.log("Ocurrió un error al guardar la clave. > " + error.message);
-        } 
-        else
-        {
-            console.log("Clave guardada.");
-        }
-    });
-
+async function setAuthKey(aKey)
+{
+    var dbAuthCKey = ref.child('tknid0');
+        return dbAuthCKey.set({testing: 'algo', content: aKey})
+            .then(function() {
+                return('Clave agregada: ' + aKey);
+            })
+            .catch(function(error) {
+                return('Ocurrió un error: ' + error.message);
+            });
+}
 //</Firebase>
 
 var port = process.env.PORT || 3000
@@ -280,6 +282,22 @@ app.get('/', function (req, res) {
 app.get('/js/app.js', function(req,res){
     res.sendFile(path.join(__dirname + '/js/app.js')); 
 });
+
+app.get('/setAuthKey', async function(req,res){
+    try {
+        if(req.query.key.length > 0)
+        {
+            resp = await setAuthKey(req.query.key);
+            res.send(resp);
+            //console.log(await setAuthKey(req.query.key))
+        } else {
+            res.status(500).send("Consulta inválida, no se ingresó clave");
+        }
+    }
+    catch {
+        res.status(500).send("Consulta inválida.");
+    }
+})
 
 app.post('/ver',async function(req, res) {
 	var pcID = req.body.pcID;
