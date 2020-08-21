@@ -284,6 +284,7 @@ app.get('/js/app.js', function(req,res){
 });
 
 app.get('/setAuthKey', async function(req,res){
+    res.header('Access-Control-Allow-Origin', '*');
     try {
         if(req.query.key.length > 0)
         {
