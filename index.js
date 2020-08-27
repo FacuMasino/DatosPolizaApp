@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const app = express();
 const path = require("path");
 const fetch = require("node-fetch");
-const { Console } = require("console");
+const console = require("console");
+//const pcDownloader = require("./pcDownloader.js");
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -74,6 +75,19 @@ let PcData = {
 
 }*/
 
+async function getVehicles(pcId){
+    //https://api.sancristobal.com.ar/policyinfoapi/api/InfoRisk/Vehicles?policyPeriodId=pc:13359640&page=1&pageSize=50
+   	const Url = 'https://api.sancristobal.com.ar/policyinfoapi/api/InfoRisk/Vehicles?policyPeriodId=' + pcId + '&page=1&pageSize=50';
+	const Params = {
+		headers: {
+			"Cookie": ".ASPXAUTH=" + authCKey,
+			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q",
+		},
+		method: "GET"
+	}
+    return fetch(Url, Params) 
+}
+
 async function GetPcSummaryAuto(PcN)
 {
 	const UrlPcSummaryAuto = 'https://portalpas.sancristobal.com.ar/PolicySearch/getPolicyByPolicyNumber?PolicyNumber=' + PcN;
@@ -109,7 +123,6 @@ async function GetPcPaymentInfo(pcId,Discount = Boolean)
 
 async function VerDatos(id)
 {
-	var pcId = "";
 	console.log("Cargando...");
 	try
 	{
@@ -275,6 +288,18 @@ async function VerDatos(id)
 	
 }
 
+async function getPcId(pcN) {
+    let res = await GetPcSummaryAuto(pcN);
+    if(res.ok){
+        let resJson = await res.json();
+        if(resJson.HasError){
+            return 1;
+        } else {
+            return resJson.PolicySummary[0].PolicyPeriodID;
+        }
+    }
+}
+
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname  + "/index.html"));
 	});
@@ -297,6 +322,41 @@ app.get('/setAuthKey', async function(req,res){
     }
     catch {
         res.status(500).send("Consulta inválida.");
+    }
+})
+
+app.get('/getVehicles', async function(req,res){
+    res.header('Access-Control-Allow-Origin', '*');
+    try {
+        if(req.query.policyNumber.length > 0)
+        {
+            pcN = await getPcId(req.query.policyNumber);
+            if(pcN == 1){
+                res.status(500).send("Error en consulta a San Cristóbal API");
+            } else {
+                resp = await getVehicles(pcN);
+                if(resp.ok){
+
+                    let vehicleData = [];
+                    let vehicles = await resp.json();
+
+                    for(i=0;i <= vehicles.count - 1;i++){
+                        vehicleData.push(vehicles.vehicles[i].licensePlate);
+                    }
+
+                    res.send(JSON.stringify(vehicleData));
+
+                } else {
+                    res.status(500).send("Error en consulta a San Cristóbal API");
+                }
+            }
+        } else {
+            res.status(500).send("Consulta inválida, no se ingresó pc");
+        }
+    }
+    catch (e) {
+        console.log("Error Catch: " + e + e.stack);
+        res.status(500).send(JSON.stringify(e + e.stack));
     }
 })
 
