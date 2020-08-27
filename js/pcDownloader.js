@@ -1,14 +1,48 @@
 const OPTIONS = {Frente: "1", Tarjeta: "2", Pago: "3", Todo: "4"};
 
-async function downloadPc(policyNumber, vehicleCount, option)
+async function getBinary(policyNumber, vhN, option)
 {
+	const URL_PAGO = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadComprobanteDePagoAutosPorVehiculo?policyNumber=' + policyNumber + "&vehicleNumber="+vhN+"&clausulas=0";
+    const URL_FRENTE = "";
+    const URL_TARJETA = "";
+    const Params = {
+		headers: {
+			//"Cookie": ".ASPXAUTH=" + authCKey,
+			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q",
+		},
+		method: "GET"
+    }
+    switch(option){
+        case OPTIONS.Frente:
+            return fetch(URL_FRENTE, Params);
+        case OPTIONS.Tarjeta:
+            return fetch(URL_TARJETA, Params);
+        case OPTIONS.Pago:
+			console.log("Fetching URL_PAGO");
+            return fetch(URL_PAGO,Params);
+    }
+}
+
+async function getVehicles(policyNumber){
+	const Url = 'https://appverdatos.herokuapp.com/getVehicles?policyNumber=' + policyNumber;
+  	return fetch(Url);
+}
+
+async function downloadPc(policyNumber, option)
+{
+	policyNumber = document.getElementById(policyNumber).value;
+	let vehicleData = await (await getVehicles(policyNumber)).json();
+	vehicleCount = Object.keys(vehicleData).length;
+	console.log(vehicleData);
+	console.log(vehicleCount);
     switch(option){
         case OPTIONS.Pago:
 
-            for(i=1; i <= vehicleCount;i++){
+			console.log("OPTIONS: Comprobantes de pago");
+            for(i=0; i <= vehicleCount-1;i++){
                 await getBinary(policyNumber,i,OPTIONS.Pago)
                 .then(res => res.arrayBuffer()
-                .then(buffer => download(buffer,"Comprobante" + i +"_" + pcN + ".pdf","application/pdf")));
+                .then(buffer => download(buffer,"Comprobante" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
             }
             
     }
