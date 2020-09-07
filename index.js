@@ -124,7 +124,7 @@ async function GetPcPaymentInfo(pcId,Discount = Boolean)
 async function getRenewals(){
     const opts = {
         "page": 1,
-        "pageSize": 20,
+        "pageSize": 100,
         "refresh": false,
         "isAvailable": false,
         "isRejected": false,
@@ -138,12 +138,12 @@ async function getRenewals(){
         "policyTypeCode": "CA7_Motorcycle"
     }
 	const Params = {
-		method: "POST",
-		body: opts,
+        method: "POST",
+        body: JSON.stringify(opts),
 		headers: {
-            "Content-Type": "application/json, text/plain, */*",
-        	"Cookie": ".ASPXAUTH="+ authCKey,
-			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q"
+            "Content-Type": "application/json",
+        	//"Cookie": ".ASPXAUTH="+ authCKey,
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q"
 		}
 	}
     return fetch("https://api.sancristobal.com.ar/portalpas/api/renewals", Params)    
@@ -357,6 +357,7 @@ app.get('/getRenewals', async function(req,res){
     res.header('Access-Control-Allow-Origin', '*');
     try {
         resp = await getRenewals();
+        resp = await resp.json();
         res.send(resp);
     }
     catch {
