@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Renovaciones Motos</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <!---<link rel='stylesheet' type='text/css' media='screen' href='main.css'>--->
+    
+    <style>
+        th, td, p, input {
+            font:14px Verdana;
+        }
+        table, th, td 
+        {
+            border: solid 1px #DDD;
+            border-collapse: collapse;
+            padding: 2px 3px;
+            text-align: center;
+        }
+        th {
+            font-weight:bold;
+        }
+    </style>
+    <script src='js/renovacionesmotos.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+</head>
+<body>
+    <input type="button" onclick="getRenewals()" value="VER RENOVACIONES" />
+    <p id="showData"></p>
+</body>
+</html>
