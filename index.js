@@ -4,7 +4,6 @@ const app = express();
 const path = require("path");
 const fetch = require("node-fetch");
 const console = require("console");
-//const pcDownloader = require("./pcDownloader.js");
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -22,13 +21,15 @@ admin.initializeApp({
   databaseURL: "https://appverdatos.firebaseio.com"
 });
 
-//Obtener clave
-var db = admin.database();
-var ref = db.ref("tkn");
-ref.once("value", function(data) {
-  authCKey = (data.val().tknid0.content);
-  console.log("Clave .ASPXAUTH Obtenida. > " + authCKey)
-});
+//Obtener
+async function getAuthKey(){
+    var db = admin.database();
+    var ref = db.ref("tkn");
+    ref.once("value", function(data) {
+    authCKey = (data.val().tknid0.content);
+    console.log("Clave .ASPXAUTH Actualizada. > " + authCKey)
+    });
+}
 
 //Guardar Clave
 async function setAuthKey(aKey)
@@ -126,10 +127,10 @@ async function getRenewals(){
         "page": 1,
         "pageSize": 100,
         "refresh": false,
-        "isAvailable": false,
-        "isRejected": false,
-        "isPending": false,
-        "isLocked": false,
+        "isAvailable": true,
+        "isRejected": true,
+        "isPending": true,
+        "isLocked": true,
         "isIssued": false,
         "producerCode": "05-002987",
         "orderBy": "RenewalStatus",
@@ -328,12 +329,72 @@ async function getPcId(pcN) {
     }
 }
 
+async function getDiscount(pc){
+
+    let JsonRes = await GetPcPaymentInfo(pc, true);
+
+    if(JsonRes.ok)
+    {
+        
+        JsonRes = await JsonRes.json();
+        if(JsonRes.ComercialAlternatives != null)
+        {
+            let Discounts = 0;
+            let Alternatives = Object.keys(JsonRes.ComercialAlternatives).length;
+            for(i=0;i < Alternatives;i++) 
+            {
+                Discounts += JsonRes.ComercialAlternatives[i].CreditDebit;
+            }																	
+            return {"descuento":Discounts * 100, "HasError": false};
+        }else {
+            return {"descuento":"0","HasError":false};
+        }														
+
+    } else {
+        return {"HasError": true, "message": "No se pudo obtener " + JsonRes.statusText};
+        //PcData.Msg = JSON.parse(await JsonRes3.text()).message;
+    }  
+}
+
 app.get('/', function (req, res) {
+    //Actualizar AuthKey Cookie header
+    getAuthKey();
+
+    // Enviar index
     res.sendFile(path.join(__dirname  + "/index.html"));
 	});
 
 app.get('/js/app.js', function(req,res){
     res.sendFile(path.join(__dirname + '/js/app.js')); 
+});
+
+app.get('/js/pcDownloader.js', function(req,res){
+    res.sendFile(path.join(__dirname + "/js/pcDownloader.js"));
+});
+
+app.get('/js/renovacionesmotos.js', async function(req,res){
+    res.sendFile(path.join(__dirname + "/js/renovacionesmotos.js"));
+});
+
+app.get('/renovacionesmotos', async function(req,res){
+    res.sendFile(path.join(__dirname + "/renovacionesmotos.html"));
+});
+
+app.get('/descuento', async function(req,res){
+    res.header('Access-Control-Allow-Origin', '*');
+    try {
+        if(req.query.pc.length > 0)
+        {
+            resp = await getDiscount(req.query.pc);
+            res.send(resp);
+            //console.log(await setAuthKey(req.query.key))
+        } else {
+            res.status(200).send("Consulta inválida, falta pc.");
+        }
+    }
+    catch(e) {
+        res.status(500).send("Consulta inválida. " + e + " " + e.stack);
+    }
 });
 
 app.get('/setAuthKey', async function(req,res){
@@ -348,8 +409,8 @@ app.get('/setAuthKey', async function(req,res){
             res.status(500).send("Consulta inválida, no se ingresó clave");
         }
     }
-    catch {
-        res.status(500).send("Consulta inválida.");
+    catch(e) {
+        res.status(500).send("Consulta inválida. " + e + " " + e.stack);
     }
 })
 
@@ -399,6 +460,7 @@ app.get('/getVehicles', async function(req,res){
         res.status(500).send(JSON.stringify(e + e.stack));
     }
 })
+
 
 app.post('/ver',async function(req, res) {
 	var pcID = req.body.pcID;

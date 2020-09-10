@@ -1,10 +1,12 @@
 const OPTIONS = {Frente: "1", Tarjeta: "2", Pago: "3", Todo: "4"};
 
+// CORREGIR BUCLE INFINITO CUANDO NO SE PUEDE OBTENER GETVEHICLES (NRO DE VEHICULOS) en FOR
+
 async function getBinary(policyNumber, vhN, option)
 {
-	const URL_PAGO = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadComprobanteDePagoAutosPorVehiculo?policyNumber=' + policyNumber + "&vehicleNumber="+vhN+"&clausulas=0";
-    const URL_FRENTE = "";
-    const URL_TARJETA = "";
+	const URL_PAGO = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadReciboPagoTarjetaAutoxInciso?policyNumber=' + policyNumber + "&vehicleNumber="+vhN;
+    const URL_FRENTE = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadFrentePoliza?policyNumber=' + policyNumber + '&vehicleNumber=1&clausulas=0';
+    const URL_TARJETA = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadTarjetaSeguroObligatorio?policyNumber='+ policyNumber + '&vehicleNumber=1&endoso=0';
     const Params = {
 		headers: {
 			//"Cookie": ".ASPXAUTH=" + authCKey,
@@ -14,8 +16,10 @@ async function getBinary(policyNumber, vhN, option)
     }
     switch(option){
         case OPTIONS.Frente:
+            console.log("Fetching URL_FRENTE");
             return fetch(URL_FRENTE, Params);
         case OPTIONS.Tarjeta:
+            console.log("Fetching URL_Tarjeta");
             return fetch(URL_TARJETA, Params);
         case OPTIONS.Pago:
 			console.log("Fetching URL_PAGO");
@@ -24,7 +28,7 @@ async function getBinary(policyNumber, vhN, option)
 }
 
 async function getVehicles(policyNumber){
-	const Url = 'https://appverdatos.herokuapp.com/getVehicles?policyNumber=' + policyNumber;
+	const Url = '/getVehicles?policyNumber=' + policyNumber;
   	return fetch(Url);
 }
 
@@ -37,14 +41,26 @@ async function downloadPc(policyNumber, option)
 	console.log(vehicleCount);
     switch(option){
         case OPTIONS.Pago:
-
 			console.log("OPTIONS: Comprobantes de pago");
             for(i=0; i <= vehicleCount-1;i++){
                 await getBinary(policyNumber,i,OPTIONS.Pago)
                 .then(res => res.arrayBuffer()
                 .then(buffer => download(buffer,"Comprobante" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
             }
-            
+        case OPTIONS.Frente:
+            console.log("OPTIONS: Frente de Póliza");
+            for(i=0; i <= vehicleCount-1;i++){
+                await getBinary(policyNumber,i,OPTIONS.Frente)
+                .then(res => res.arrayBuffer()
+                .then(buffer => download(buffer,"FrentePóliza" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
+            }
+        case OPTIONS.Tarjeta:
+            console.log("OPTIONS: Tarjeta");
+            for(i=0; i <= vehicleCount-1;i++){
+                await getBinary(policyNumber,i,OPTIONS.Tarjeta)
+                .then(res => res.arrayBuffer()
+                .then(buffer => download(buffer,"Tarjeta" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
+            }
     }
 
 }
