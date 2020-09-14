@@ -21,10 +21,11 @@ admin.initializeApp({
   databaseURL: "https://appverdatos.firebaseio.com"
 });
 
+var db = admin.database();
+var ref = db.ref("tkn");
+
 //Obtener
 async function getAuthKey(){
-    var db = admin.database();
-    var ref = db.ref("tkn");
     ref.once("value", function(data) {
     authCKey = (data.val().tknid0.content);
     console.log("Clave .ASPXAUTH Actualizada. > " + authCKey)
