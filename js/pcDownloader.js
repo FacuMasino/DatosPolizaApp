@@ -42,7 +42,7 @@ async function downloadPc(policyNumber, option)
     switch(option){
         case OPTIONS.Pago:
 			console.log("OPTIONS: Comprobantes de pago");
-            for(i=0; i <= vehicleCount-1;i++){
+            for(i=1; i <= vehicleCount;i++){
                 await getBinary(policyNumber,i,OPTIONS.Pago)
                 .then(res => res.arrayBuffer()
                 .then(buffer => download(buffer,"Comprobante" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
@@ -50,7 +50,7 @@ async function downloadPc(policyNumber, option)
             break;
         case OPTIONS.Frente:
             console.log("OPTIONS: Frente de Póliza");
-            for(i=0; i <= vehicleCount-1;i++){
+            for(i=1; i <= vehicleCount;i++){
                 console.log("Descargando Frente " + vehicleData[i]);
                 await getBinary(policyNumber,i,OPTIONS.Frente)
                 .then(res => res.arrayBuffer()
@@ -59,7 +59,7 @@ async function downloadPc(policyNumber, option)
             break;
         case OPTIONS.Tarjeta:
             console.log("OPTIONS: Tarjeta");
-            for(i=0; i <= vehicleCount-1;i++){
+            for(i=1; i <= vehicleCount;i++){
                 await getBinary(policyNumber,i,OPTIONS.Tarjeta)
                 .then(res => res.arrayBuffer()
                 .then(buffer => download(buffer,"Tarjeta" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
