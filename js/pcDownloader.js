@@ -41,7 +41,11 @@ async function downloadPc(policyNumber, option)
 	console.log("Cantidad de vehículos: " + vehicleCount);
     switch(option){
         case OPTIONS.Pago:
+<<<<<<< HEAD
 			console.log("OPTIONS: recibo de pago tarjeta/cbu");
+=======
+			console.log("OPTIONS: Comprobantes de pago");
+>>>>>>> 7418661a1d290b6c6951c1372a3406e55c1758ec
             for(i=1; i <= vehicleCount;i++){
                 await getBinary(policyNumber,i,OPTIONS.Pago)
                 .then(res => res.arrayBuffer()
