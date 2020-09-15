@@ -22,7 +22,7 @@ async function getBinary(policyNumber, vhN, option)
             console.log("Fetching URL_Tarjeta");
             return fetch(URL_TARJETA, Params);
         case OPTIONS.Pago:
-			console.log("Fetching URL_PAGO");
+			console.log("Fetching URL_ReciboPago");
             return fetch(URL_PAGO,Params);
     }
 }
@@ -41,11 +41,15 @@ async function downloadPc(policyNumber, option)
 	console.log("Cantidad de vehículos: " + vehicleCount);
     switch(option){
         case OPTIONS.Pago:
+<<<<<<< HEAD
+			console.log("OPTIONS: recibo de pago tarjeta/cbu");
+=======
 			console.log("OPTIONS: Comprobantes de pago");
+>>>>>>> 7418661a1d290b6c6951c1372a3406e55c1758ec
             for(i=1; i <= vehicleCount;i++){
                 await getBinary(policyNumber,i,OPTIONS.Pago)
                 .then(res => res.arrayBuffer()
-                .then(buffer => download(buffer,"Comprobante" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
+                .then(buffer => download(buffer,"ReciboPago" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
             }
             break;
         case OPTIONS.Frente:
