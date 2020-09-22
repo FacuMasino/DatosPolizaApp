@@ -51,6 +51,8 @@ var port = process.env.PORT || 3000
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+let authBearer = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE2MDA3OTEzMjcsImV4cCI6MTYwNTk3NTMyN30.zYadzmpUUPTkGYINPD4SZYkSsFihSL3GMbG7Ute28xE";
+
 let PcData = {
 	AcName: '',
 	PaymentMethod: '',
@@ -83,7 +85,7 @@ async function getVehicles(pcId){
 	const Params = {
 		headers: {
 			"Cookie": ".ASPXAUTH=" + authCKey,
-			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q",
+			"Authorization": authBearer,
 		},
 		method: "GET"
 	}
@@ -96,7 +98,7 @@ async function GetPcSummaryAuto(PcN)
 	const Params = {
 		headers: {
 			"Cookie": ".ASPXAUTH=" + authCKey,
-			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q",
+			"Authorization": authBearer,
 		},
 		method: "GET"
 	}
@@ -111,7 +113,7 @@ async function GetPcPaymentInfo(pcId,Discount = Boolean)
 	const Params = {
 		headers: {
 			"Cookie": ".ASPXAUTH="+ authCKey,
-			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q",
+			"Authorization": authBearer,
 		},
 		method: "GET",
 	}
@@ -125,30 +127,35 @@ async function GetPcPaymentInfo(pcId,Discount = Boolean)
 
 async function getRenewals(){
     const opts = {
-        "page": 1,
-        "pageSize": 100,
-        "refresh": false,
-        "isAvailable": true,
-        "isRejected": true,
-        "isPending": true,
-        "isLocked": true,
-        "isIssued": false,
-        "producerCode": "05-002987",
-        "orderBy": "RenewalStatus",
-        "sortDirection": "ASC",
-        "policyProductCode": "CA7CommAuto",
-        "policyTypeCode": "CA7_Motorcycle"
+        page: 1,
+        pageSize: 100,
+        refresh: false,
+        isAvailable: true,
+        isRejected: true,
+        isPending: true,
+        isLocked: true,
+        isIssued: false,
+        producerCode: "05-002987",
+        orderBy: "RenewalStatus",
+        sortDirection: "ASC",
+        policyProductCode: "CA7CommAuto",
+        policyTypeCode: "CA7_Motorcycle"
     }
+
+    //UPDATE AUTH KEY
+    //getAuthKey();
+
 	const Params = {
         method: "POST",
         body: JSON.stringify(opts),
 		headers: {
-            "Content-Type": "application/json",
         	//"Cookie": ".ASPXAUTH="+ authCKey,
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzIwNjI5NTg5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNjb3R0aTI5ODciLCJVc2VySWQiOjMxMDUzLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQcm9kdWN0b3IiLCJIYXNoZWRQYXNzd29yZCI6IjEyYWQyODk1NjU4OTZkZmNhYmQ1NWVhZTNjZmJjZTU0NTdjNDMyNGUiLCJuYmYiOjE1OTU0MTYyOTEsImV4cCI6MTYwMDYwMDI5MX0.p9Jwyxd43n7UbyUDxIIImiFcCD-bVIvbyDf5xqx5m4Q"
+            "Authorization": authBearer,
+            "Accept": "*/*",
+             "Content-Type": "application/json"
 		}
 	}
-    return fetch("https://api.sancristobal.com.ar/portalpas/api/renewals", Params)    
+    return fetch("https://api.sancristobal.com.ar/portalpas/api/renewals", Params);
 }
 
 async function VerDatos(id)
@@ -348,7 +355,7 @@ async function getDiscount(pc){
             }																	
             return {"descuento":Discounts * 100, "HasError": false};
         }else {
-            return {"descuento":"0","HasError":false};
+            return {"descuento":"0","HasError":false, "JsonRes": JSON.stringify(JsonRes)};
         }														
 
     } else {
@@ -378,6 +385,7 @@ app.get('/js/renovacionesmotos.js', async function(req,res){
 });
 
 app.get('/renovacionesmotos', async function(req,res){
+    getAuthKey();
     res.sendFile(path.join(__dirname + "/renovacionesmotos.html"));
 });
 
@@ -416,14 +424,20 @@ app.get('/setAuthKey', async function(req,res){
 })
 
 app.get('/getRenewals', async function(req,res){
-    res.header('Access-Control-Allow-Origin', '*');
+    //res.header('Access-Control-Allow-Origin', '*');
     try {
-        resp = await getRenewals();
-        resp = await resp.json();
-        res.send(resp);
+        let respo2 = await getRenewals()
+            .then(data => data.json());
+
+        //if(respo2.ok){
+            //console.log(await respo2.text());
+            res.send(await respo2);
+        //}
+
     }
-    catch {
-        res.status(500).send("Ocurrió un error en la app");
+    catch(e) {
+        console.log("Error getRenewals. " + e + " " + e.stack)
+        res.status(500).send("Ocurrió un error en la app. " + e + " " + e.stack);
     }
 })
 
@@ -487,6 +501,3 @@ app.post('/ver',async function(req, res) {
 app.listen(port, () => {
     console.log("El servidor está inicializado en el puerto 3000");
    });
-
-   
-   

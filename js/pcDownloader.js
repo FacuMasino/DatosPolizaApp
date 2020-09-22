@@ -32,24 +32,23 @@ async function getVehicles(policyNumber){
   	return fetch(Url);
 }
 
+
 async function downloadPc(policyNumber, option)
 {
-	policyNumber = document.getElementById(policyNumber).value;
-	let vehicleData = await (await getVehicles(policyNumber)).json();
-	vehicleCount = Object.keys(vehicleData).length;
+    policyNumber = document.getElementById(policyNumber).value;
+    
+    let vehicleData = await (await getVehicles(policyNumber)).json();
+    let vehicleCount = Object.keys(vehicleData).length;
+    
 	console.log(vehicleData);
 	console.log("Cantidad de vehículos: " + vehicleCount);
     switch(option){
         case OPTIONS.Pago:
-<<<<<<< HEAD
-			console.log("OPTIONS: recibo de pago tarjeta/cbu");
-=======
-			console.log("OPTIONS: Comprobantes de pago");
->>>>>>> 7418661a1d290b6c6951c1372a3406e55c1758ec
+            console.log("OPTIONS: recibo de pago tarjeta/cbu");
             for(i=1; i <= vehicleCount;i++){
                 await getBinary(policyNumber,i,OPTIONS.Pago)
                 .then(res => res.arrayBuffer()
-                .then(buffer => download(buffer,"ReciboPago" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
+                .then(buffer => download(buffer,"ReciboPago" + "_" + vehicleData[i-1] +"_" + policyNumber + ".pdf","application/pdf")));
             }
             break;
         case OPTIONS.Frente:
@@ -58,7 +57,7 @@ async function downloadPc(policyNumber, option)
                 console.log("Descargando Frente " + vehicleData[i]);
                 await getBinary(policyNumber,i,OPTIONS.Frente)
                 .then(res => res.arrayBuffer()
-                .then(buffer => download(buffer,"FrentePóliza" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
+                .then(buffer => download(buffer,"FrentePóliza" + "_" + vehicleData[i-1] +"_" + policyNumber + ".pdf","application/pdf")));
             }
             break;
         case OPTIONS.Tarjeta:
@@ -66,7 +65,7 @@ async function downloadPc(policyNumber, option)
             for(i=1; i <= vehicleCount;i++){
                 await getBinary(policyNumber,i,OPTIONS.Tarjeta)
                 .then(res => res.arrayBuffer()
-                .then(buffer => download(buffer,"Tarjeta" + "_" + vehicleData[i] +"_" + policyNumber + ".pdf","application/pdf")));
+                .then(buffer => download(buffer,"Tarjeta" + "_" + vehicleData[i-1] +"_" + policyNumber + ".pdf","application/pdf")));
             }
             break;
     }
