@@ -1,4 +1,4 @@
-const OPTIONS = {Frente: "1", Tarjeta: "2", Pago: "3", Todo: "4"};
+const OPTIONS = {Frente: "1", Tarjeta: "2", Pago: "3", Todo: "4", ComprobantePago: "5"};
 
 // CORREGIR BUCLE INFINITO CUANDO NO SE PUEDE OBTENER GETVEHICLES (NRO DE VEHICULOS) en FOR
 
@@ -7,6 +7,8 @@ async function getBinary(policyNumber, vhN, option)
 	const URL_PAGO = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadReciboPagoTarjetaAutoxInciso?policyNumber=' + policyNumber + "&vehicleNumber="+vhN;
     const URL_FRENTE = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadFrentePoliza?policyNumber=' + policyNumber + '&vehicleNumber=' + vhN + '&clausulas=0';
     const URL_TARJETA = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadTarjetaSeguroObligatorio?policyNumber='+ policyNumber + '&vehicleNumber=' + vhN + '&endoso=0';
+    const URL_CPAGO = 'https://api.sancristobal.com.ar/policyinfoapi/api/Report/DownloadComprobanteDePagoAutosPorVehiculo?policyNumber='+ policyNumber + '&vehicleNumber=' + vhN;
+    
     const Params = {
 		headers: {
 			//"Cookie": ".ASPXAUTH=" + authCKey,
@@ -24,6 +26,9 @@ async function getBinary(policyNumber, vhN, option)
         case OPTIONS.Pago:
 			console.log("Fetching URL_ReciboPago");
             return fetch(URL_PAGO,Params);
+        case OPTIONS.ComprobantePago:
+            console.log("Fetching URL_ComprobantePago");
+            return fetch(URL_CPAGO,Params);
     }
 }
 
@@ -68,6 +73,14 @@ async function downloadPc(policyNumber, option)
                 .then(buffer => download(buffer,"Tarjeta" + "_" + vehicleData[i-1] +"_" + policyNumber + ".pdf","application/pdf")));
             }
             break;
+        case OPTIONS.ComprobantePago:
+            console.log("OPTIONS: Comprobante de Pago");
+            for(i=1; i <= vehicleCount;i++){
+                await getBinary(policyNumber,i,OPTIONS.ComprobantePago)
+                .then(res => res.arrayBuffer()
+                .then(buffer => download(buffer,"ComprobantePago" + "_" + vehicleData[i-1] +"_" + policyNumber + ".pdf","application/pdf")));
+            }
+            break;        
     }
 
 }
