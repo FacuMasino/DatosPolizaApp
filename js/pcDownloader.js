@@ -32,11 +32,14 @@ async function getVehicles(policyNumber){
   	return fetch(Url);
 }
 
+
 async function downloadPc(policyNumber, option)
 {
-	policyNumber = document.getElementById(policyNumber).value;
-	let vehicleData = await (await getVehicles(policyNumber)).json();
-	vehicleCount = Object.keys(vehicleData).length;
+    policyNumber = document.getElementById(policyNumber).value;
+    
+    let vehicleData = await (await getVehicles(policyNumber)).json();
+    let vehicleCount = Object.keys(vehicleData).length;
+    
 	console.log(vehicleData);
 	console.log("Cantidad de vehículos: " + vehicleCount);
     switch(option){

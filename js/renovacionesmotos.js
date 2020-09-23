@@ -31,8 +31,10 @@ async function getRenewals(){
     
     let renewals = await viewRenewals()
     renewals = await renewals.json();
-
-    for(i = 0; i <= renewals.count -1;i++){
+    console.log("obtenido");
+    console.log(renewals);
+    console.log("Total: " + renewals.count)
+    for(i = 0; i <= renewals.count-1;i++){
         let moto = renewals.renewals[i];
         
         let descuento = "-";
