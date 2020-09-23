@@ -142,18 +142,19 @@ async function getRenewals(){
         policyTypeCode: "CA7_Motorcycle"
     }
 
-    //UPDATE AUTH KEY
-    //getAuthKey();
+    
+    //UPDATE AUTHKEY
+    getAuthKey();
 
 	const Params = {
-        method: "POST",
-        body: JSON.stringify(opts),
+	method: "POST",
+	body: JSON.stringify(opts),
 		headers: {
         	//"Cookie": ".ASPXAUTH="+ authCKey,
             "Authorization": authBearer,
             "Accept": "*/*",
              "Content-Type": "application/json"
-		}
+		        }
 	}
     return fetch("https://api.sancristobal.com.ar/portalpas/api/renewals", Params);
 }
