@@ -80,7 +80,9 @@ let PcData = {
 }*/
 
 async function getVehicles(pcId){
-    //https://api.sancristobal.com.ar/policyinfoapi/api/InfoRisk/Vehicles?policyPeriodId=pc:13359640&page=1&pageSize=50
+    // Controlar PageSize
+    //Update Auth Key
+    getAuthKey();
    	const Url = 'https://api.sancristobal.com.ar/policyinfoapi/api/InfoRisk/Vehicles?policyPeriodId=' + pcId + '&page=1&pageSize=50';
 	const Params = {
 		headers: {
